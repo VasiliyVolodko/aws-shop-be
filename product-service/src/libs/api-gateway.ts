@@ -5,9 +5,9 @@ export const formatJSONResponse = (response: Record<string, unknown>) => {
   }
 }
 
-export const errorRespone = (error: {message: string}) => {
+export const errorRespone = (error: { message: string }, statusCode = 404) => {
   return {
-    statusCode: 404,
+    statusCode,
     body: JSON.stringify(error)
   }
 }
