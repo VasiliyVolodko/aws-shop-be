@@ -48,7 +48,7 @@ export const createProduct = async (product) => {
             TableName: STOCKS_TABLE_NAME,
             Item: {
               productId: id,
-              count: 0
+              count: product.count ?? 0
             }
           }
         }

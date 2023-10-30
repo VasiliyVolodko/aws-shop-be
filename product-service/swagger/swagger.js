@@ -24,10 +24,10 @@
           }
         }
       },
-      "post": {
+      "put": {
         "summary": "createProduct",
         "description": "",
-        "operationId": "createProduct.post.products",
+        "operationId": "createProduct.put.products",
         "consumes": [
           "application/json"
         ],
