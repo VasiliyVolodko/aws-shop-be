@@ -4,11 +4,11 @@ import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aw
 const client = new DynamoDBClient({});
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const TABLE_NAME = 'Stocks'
+export const STOCKS_TABLE_NAME = 'Stocks'
 
 export const getStocks = async () => {
   const response = await ddbDocClient.send(new ScanCommand({
-    TableName: TABLE_NAME
+    TableName: STOCKS_TABLE_NAME
   }))
 
   return response.Items
@@ -17,7 +17,7 @@ export const getStocks = async () => {
 export const getStockById = async (productId: string) => {
   const response = await ddbDocClient.send(
     new GetCommand({
-      TableName: TABLE_NAME,
+      TableName: STOCKS_TABLE_NAME,
       Key: {
         productId
       },
@@ -31,7 +31,7 @@ export const getStockById = async (productId: string) => {
 export const createStock = async (productId) => {
   const response = await ddbDocClient.send(
     new PutCommand({
-      TableName: TABLE_NAME,
+      TableName: STOCKS_TABLE_NAME,
       Item: {
         productId,
         count: 0
