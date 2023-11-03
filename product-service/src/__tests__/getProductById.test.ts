@@ -1,11 +1,16 @@
 import { main as getProductById } from '../functions/getProductById/handler'
 import { buildMockEvent } from '../testUtils/mocks'
-import products from '@mocks/mock.json'
+import products from '@mocks/product.json'
 
 jest.mock('@middy/core', () => {
   return (handler) => {
     return {
-      use: jest.fn().mockReturnValue(handler), // ...use(ssm()) will return handler function
+      use: jest.fn().mockImplementation(() => {
+        // ...use(ssm()) will return handler function
+        return {
+          before: jest.fn().mockReturnValue(handler)
+        }
+      })
     }
   }
 })
