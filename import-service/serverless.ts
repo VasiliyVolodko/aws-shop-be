@@ -21,7 +21,8 @@ const serverlessConfiguration: AWS = {
       REGION: '${self:provider.region}',
       S3_BUCKET_NAME: 'my-uploaded-files-learning',
       UPLOAD_FOLDER: 'upload',
-      PARSED_FOLDER: 'parsed'
+      PARSED_FOLDER: 'parsed',
+      SQS_URL: '${cf:product-service-dev.sqsUrl}'
     },
     iam: {
       role: {
@@ -29,12 +30,12 @@ const serverlessConfiguration: AWS = {
           {
             Effect: 'Allow',
             Action: 's3:*',
-            Resource: 'arn:aws:s3:::my-uploaded-files-learning/${self:provider.environment.UPLOAD_FOLDER}/*'
+            Resource: 'arn:aws:s3:::my-uploaded-files-learning/*'
           },
           {
-            Effect: 'Allow',
-            Action: 's3:*',
-            Resource: 'arn:aws:s3:::my-uploaded-files-learning/${self:provider.environment.PARSED_FOLDER}/*'
+            Effect: "Allow",
+            Action: "sqs:*",
+            Resource: "arn:aws:sqs:eu-west-1:760088124454:catalogItemsQueue"
           }
         ]
       }

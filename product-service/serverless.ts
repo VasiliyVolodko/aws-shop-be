@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductById, createProduct } from '@functions/index';
+import { getProductsList, getProductById, createProduct, catalogBatchProcess } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service',
@@ -15,7 +15,13 @@ const serverlessConfiguration: AWS = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
-      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000'
+      NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      SQS_URL: {
+        Ref: 'catalogItemsQueue'
+      },
+      SNS_ARN: {
+        Ref: 'createProductTopic'
+      }
     },
     region: 'eu-west-1',
     stage: 'dev',
@@ -43,13 +49,20 @@ const serverlessConfiguration: AWS = {
               'dynamodb:DeleteItem'
             ],
             Resource: 'arn:aws:dynamodb:${aws:region}:*:table/Stocks'
+          },
+          {
+            Effect: 'Allow',
+            Action: 'sns:*',
+            Resource: {
+              Ref: 'createProductTopic'
+            }
           }
         ]
       }
     }
   },
   // import the function via paths
-  functions: { getProductsList, getProductById, createProduct },
+  functions: { getProductsList, getProductById, createProduct, catalogBatchProcess },
   resources: {
     Resources: {
       ProductsDynamoDB: {
@@ -94,6 +107,36 @@ const serverlessConfiguration: AWS = {
             ReadCapacityUnits: 1,
             WriteCapacityUnits: 1
           }
+        }
+      },
+      catalogItemsQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalogItemsQueue'
+        }
+      },
+      createProductTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'createProductTopic'
+        }
+      },
+      EmailSubSNS: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'volodkovasya@gmail.com',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'createProductTopic'
+          }
+        }
+      }
+    },
+    Outputs: {
+      sqsUrl: {
+        Value: '${self:provider.environment.SQS_URL}',
+        Export: {
+          Name: 'sqsUrl'
         }
       }
     }

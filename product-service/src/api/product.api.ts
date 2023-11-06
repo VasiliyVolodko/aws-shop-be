@@ -38,7 +38,9 @@ export const createProduct = async (product) => {
           Put: {
             TableName: PRODUCT_TABLE_NAME,
             Item: {
-              ...product,
+              title: product.title,
+              description: product.description,
+              price: product.price,
               id
             }
           }
